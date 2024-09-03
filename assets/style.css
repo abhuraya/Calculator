@@ -1,0 +1,28 @@
+#display{
+    border: solid;
+    height: 50px;
+    width: 496px;
+    font-size: larger;
+}
+
+#calculator{
+    border: solid;
+    height: 500px;
+    width: 500px;
+    display: flex;
+    flex-flow: wrap;
+}
+
+#page{
+    display: flex;
+    justify-content: center;
+}
+
+button{
+    height: 100px;
+    width: 125px;
+    font-size: large;
+}
+
+
+
