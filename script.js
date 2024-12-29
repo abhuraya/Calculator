@@ -14,12 +14,19 @@ let minus = document.getElementById('subtract');
 let divide = document.getElementById('divide');
 let multiply = document.getElementById('multiply');
 let equals = document.getElementById('equal');
+let dicimal = document.getElementById('decimal');
 
 
 let array = [];
 let array1 = [];
 let array2 = [];
 let sign;
+
+decimal.addEventListener('click', function() {
+    array.push('.');
+
+    display.textContent = array.join('');
+});
 
 one.addEventListener('click', function() {
     array.push(1);
@@ -122,6 +129,7 @@ equals.addEventListener('click', function() {
     operator(array1, array2, sign);
 });
 
+
 function operator(array1, array2, sign) {
     let num1 = parseInt(array1.join(''));
     let num2 = parseInt(array2.join(''));
@@ -146,3 +154,11 @@ function operator(array1, array2, sign) {
     array2 = [];
     console.log(result);
 };
+
+
+decimal.addEventListener('dblclick', function() {
+    array = [];
+    array1 = [];
+    array2 = [];
+    display.textContent = array;
+});
