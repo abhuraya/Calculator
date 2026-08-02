@@ -6,7 +6,7 @@ The project supports standard arithmetic, decimal calculations, chained operatio
 
 ## Live Demo
 
-Add your deployed Netlify or GitHub Pages link here.
+[Open the live calculator]https://app.netlify.com/projects/lightcalculator/overview
 
 ## Features
 
