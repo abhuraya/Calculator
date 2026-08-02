@@ -1,164 +1,199 @@
-let display = document.getElementById('display');
-let one = document.getElementById('one');
-let two = document.getElementById('two');
-let three = document.getElementById('three');
-let four = document.getElementById('four');
-let five = document.getElementById('five');
-let six = document.getElementById('six');
-let seven = document.getElementById('seven');
-let eight = document.getElementById('eight');
-let nine = document.getElementById('nine');
-let zero = document.getElementById('zero');
-let plus = document.getElementById('plus');
-let minus = document.getElementById('subtract');
-let divide = document.getElementById('divide');
-let multiply = document.getElementById('multiply');
-let equals = document.getElementById('equal');
-let dicimal = document.getElementById('decimal');
+const display = document.getElementById("display");
+const numberButtons = document.querySelectorAll(".number-button");
+const operatorButtons = document.querySelectorAll(".operator-button");
+const equalsButton = document.getElementById("equals");
+const clearButton = document.getElementById("clear");
+const deleteButton = document.getElementById("delete");
 
+let currentInput = "0";
+let firstOperand = null;
+let operator = null;
+let shouldResetDisplay = false;
 
-let array = [];
-let array1 = [];
-let array2 = [];
-let sign;
+function updateDisplay() {
+    display.textContent = currentInput;
+}
 
-decimal.addEventListener('click', function() {
-    array.push('.');
-
-    display.textContent = array.join('');
-});
-
-one.addEventListener('click', function() {
-    array.push(1);
-
-    display.textContent = array.join('');
-});
-
-two.addEventListener('click', function() {
-    array.push(2);
-
-    display.textContent = array.join('');
-});
-
-three.addEventListener('click', function() {
-    array.push(3);
-
-    display.textContent = array.join('');
-});
-
-four.addEventListener('click', function() {
-    array.push(4);
-
-    display.textContent = array.join('');
-});
-
-five.addEventListener('click', function() {
-    array.push(5);
-
-    display.textContent = array.join('');
-});
-
-six.addEventListener('click', function() {  
-    array.push(6);
-
-    display.textContent = array.join('');
-});
-
-seven.addEventListener('click', function() {
-    array.push(7);
-
-    display.textContent = array.join('');
-});
-
-eight.addEventListener('click', function() {
-    array.push(8);
-
-    display.textContent = array.join('');
-});
-
-nine.addEventListener('click', function() {
-    array.push(9);
-
-    display.textContent = array.join('');
-});
-
-zero.addEventListener('click', function() {
-    array.push(0);
-
-    display.textContent = array.join('');
-});
-
-plus.addEventListener('click', function() {
-    array1 = array;
-    array = [];
-    sign = '+';
-    display.textContent = array;
-    console.log(array1.join(''));
-}); 
-
-minus.addEventListener('click', function() {
-    array1 = array;
-    array = [];
-    sign = '-';
-    display.textContent = array;
-    console.log(array1.join(''));
-});
-
-divide.addEventListener('click', function() {
-    array1 = array;
-    array = [];
-    sign = '/';
-    display.textContent = array;
-    console.log(array1.join(''));
-});
-
-multiply.addEventListener('click', function() { 
-    array1 = array;
-    array = [];
-    sign = '*';
-    display.textContent = array;
-    console.log(array1.join(''));
-});
-
-equals.addEventListener('click', function() {
-    array2 = array;
-    console.log(sign);
-    console.log(array2);
-    array = [];
-    display.textContent = array;
-    operator(array1, array2, sign);
-});
-
-
-function operator(array1, array2, sign) {
-    let num1 = parseInt(array1.join(''));
-    let num2 = parseInt(array2.join(''));
-    let result;
-    switch(sign) {
-        case '+':
-            result = num1 + num2;
-            break;
-        case '-':
-            result = num1 - num2;
-            break;
-        case '/':
-            result = num1 / num2;
-            break;
-        case '*':
-            result = num1 * num2;
-            break;
+function appendNumber(value) {
+    if (shouldResetDisplay) {
+        currentInput = "0";
+        shouldResetDisplay = false;
     }
-    display.textContent = result;
-    array = [];
-    array1 = [];
-    array2 = [];
-    console.log(result);
-};
 
+    if (value === ".") {
+        if (currentInput.includes(".")) {
+            return;
+        }
 
-decimal.addEventListener('dblclick', function() {
-    array = [];
-    array1 = [];
-    array2 = [];
-    display.textContent = array;
+        currentInput += ".";
+        updateDisplay();
+        return;
+    }
+
+    if (currentInput === "0") {
+        currentInput = value;
+    } else {
+        currentInput += value;
+    }
+
+    updateDisplay();
+}
+
+function chooseOperator(nextOperator) {
+    const inputValue = Number(currentInput);
+
+    if (firstOperand === null) {
+        firstOperand = inputValue;
+    } else if (operator && !shouldResetDisplay) {
+        const result = calculate(firstOperand, inputValue, operator);
+
+        if (result === null) {
+            return;
+        }
+
+        firstOperand = result;
+        currentInput = formatResult(result);
+        updateDisplay();
+    }
+
+    operator = nextOperator;
+    shouldResetDisplay = true;
+}
+
+function calculate(firstNumber, secondNumber, selectedOperator) {
+    if (selectedOperator === "+") {
+        return firstNumber + secondNumber;
+    }
+
+    if (selectedOperator === "-") {
+        return firstNumber - secondNumber;
+    }
+
+    if (selectedOperator === "*") {
+        return firstNumber * secondNumber;
+    }
+
+    if (selectedOperator === "/") {
+        if (secondNumber === 0) {
+            display.textContent = "Cannot divide by zero";
+            resetCalculatorState();
+            shouldResetDisplay = true;
+            return null;
+        }
+
+        return firstNumber / secondNumber;
+    }
+
+    return secondNumber;
+}
+
+function formatResult(value) {
+    if (!Number.isFinite(value)) {
+        return "Error";
+    }
+
+    return String(Number(value.toFixed(10)));
+}
+
+function handleEquals() {
+    if (firstOperand === null || operator === null) {
+        return;
+    }
+
+    const secondOperand = Number(currentInput);
+    const result = calculate(
+        firstOperand,
+        secondOperand,
+        operator
+    );
+
+    if (result === null) {
+        return;
+    }
+
+    currentInput = formatResult(result);
+    updateDisplay();
+
+    firstOperand = null;
+    operator = null;
+    shouldResetDisplay = true;
+}
+
+function clearCalculator() {
+    currentInput = "0";
+    firstOperand = null;
+    operator = null;
+    shouldResetDisplay = false;
+    updateDisplay();
+}
+
+function deleteLastCharacter() {
+    if (shouldResetDisplay) {
+        return;
+    }
+
+    if (currentInput.length <= 1) {
+        currentInput = "0";
+    } else {
+        currentInput = currentInput.slice(0, -1);
+    }
+
+    updateDisplay();
+}
+
+function resetCalculatorState() {
+    firstOperand = null;
+    operator = null;
+}
+
+numberButtons.forEach(function (button) {
+    button.addEventListener("click", function () {
+        appendNumber(button.dataset.value);
+    });
+});
+
+operatorButtons.forEach(function (button) {
+    button.addEventListener("click", function () {
+        chooseOperator(button.dataset.operator);
+    });
+});
+
+equalsButton.addEventListener("click", handleEquals);
+clearButton.addEventListener("click", clearCalculator);
+deleteButton.addEventListener("click", deleteLastCharacter);
+
+updateDisplay();
+
+document.addEventListener("keydown", function (event) {
+    const key = event.key;
+
+    if (!Number.isNaN(Number(key)) && key !== " ") {
+        appendNumber(key);
+        return;
+    }
+
+    if (key === ".") {
+        appendNumber(".");
+        return;
+    }
+
+    if (["+", "-", "*", "/"].includes(key)) {
+        chooseOperator(key);
+        return;
+    }
+
+    if (key === "Enter" || key === "=") {
+        event.preventDefault();
+        handleEquals();
+        return;
+    }
+
+    if (key === "Backspace") {
+        deleteLastCharacter();
+        return;
+    }
+
+    if (key === "Escape") {
+        clearCalculator();
+    }
 });
